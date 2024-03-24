@@ -1,8 +1,8 @@
-export default async function userLogin(userEmail:string,userPassword:string) {
+export default async function userLogin(userEmail:string, userPassword:string) {
     
-    const response = await fetch('http://localhost:5000/api/v1/auth/login',{
+    const response = await fetch('http://localhost:5000/api/v1/auth/login', {
         method: "POST",
-        headers:{
+        headers: {
             "Content-Type":"application/json",
         },
         body: JSON.stringify({
@@ -10,7 +10,7 @@ export default async function userLogin(userEmail:string,userPassword:string) {
             password: userPassword
         })
     })
-    if(!response.ok){
+    if (!response.ok) {
         throw new Error('Failed to log-in')
     }
 

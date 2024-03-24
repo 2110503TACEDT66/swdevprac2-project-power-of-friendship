@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import { ReservationItem } from "../../../interfaces";
-import { addReservation } from "@/redux/features/cartSlice";
+import { addReservation } from "@/redux/features/bookSlice";
 
 export default function Reservations (){
 

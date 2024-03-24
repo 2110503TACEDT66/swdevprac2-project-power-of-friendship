@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 let isConnected = false
-export const dbConnect = async()=>{
+export const dbConnect = async() => {
     mongoose.set('strictQuery',true)
     if(isConnected) return
     const MONGO_URI = process.env.MONGO_URI

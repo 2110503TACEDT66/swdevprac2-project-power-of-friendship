@@ -1,7 +1,7 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import cartSlice from "./features/cartSlice";
-import {TypedUseSelectorHook, useSelector } from "react-redux";
-import {persistReducer} from "redux-persist"
+import bookSlice from "./features/bookSlice";
+import { TypedUseSelectorHook, useSelector } from "react-redux";
+import { persistReducer } from "redux-persist"
 import storage from "redux-persist/lib/storage"
 
 const persistConfig = {
@@ -9,7 +9,7 @@ const persistConfig = {
     storage
 }
 
-const rootReducer = combineReducers({cartSlice})
+const rootReducer = combineReducers({bookSlice})
 const reduxPersistedReducer = persistReducer(persistConfig, rootReducer)
 
 

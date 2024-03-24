@@ -3,7 +3,7 @@ import ProductCard from "./ProductCard";
 import { useReducer, useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import { count } from "console";
-import getCars from "@/libs/getCars";
+import getCars from "@/libs/getCompanies";
 
 export default function CarPanel(){
 
