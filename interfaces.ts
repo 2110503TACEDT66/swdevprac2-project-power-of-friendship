@@ -16,3 +16,11 @@ interface BookingItem {
     company: string;
     bookDate: string;
   }
+
+interface SectionItem {
+    company:string
+    user: string
+    date: Date
+    status: string
+    description: string
+}
