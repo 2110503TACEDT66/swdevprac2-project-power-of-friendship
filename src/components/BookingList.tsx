@@ -1,85 +1,97 @@
-import { AppDispatch, useAppSelector } from "@/redux/store";
-import { useDispatch } from "react-redux";
-import { addBooking } from "@/redux/features/bookSlice";
-import { removeBooking } from "@/redux/features/bookSlice";
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
-import { format } from 'date-fns'
+'use client'
 
-export default async function BookingList() {
-    const session = await getServerSession(authOptions)
-    if (!session || !session.user.token) return null
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-    // const bookItems = useAppSelector((state)=> state.bookSlice.bookItems)
-    // const dispatch = useDispatch<AppDispatch>()
+import { Session, getServerSession } from "next-auth"
+import { useEffect, useState } from "react"
+import { useSession } from 'next-auth/react'
+import Link from "next/link";
 
-    const appointments = await fetch("http://localhost:5000/api/v1/appointments", {
-        method: "GET",
-        headers:{
-            authorization: `Bearer ${session.user.token}`,
-        }
-    })
-    const appointmentsJsonReady = await appointments.json()
-    // {
-    //     appointmentsJsonReady.data.map((appointmentItem:BookingItem) => (
-    //             // item = {
-    //             //     name: session.user.name,
-    //             //     tel: session.user.tel,
-    //             //     id: appointmentItem._id,
-    //             //     company: appointmentItem.company,
-    //             //     bookDate: appointmentItem.appDate
-    //             // }
-    //             dispatch(addBooking(appointmentItem))
-    //         // const item:ReservationItem = {
-    //         //     carId: cid,
-    //         //     carModel: model,
-    //         //     numOfDays: returnDate.diff(pickupDate,'day'),
-    //         //     pickupDate: dayjs(pickupDate).format("YYYY/MM/DD"),
-    //         //     pickupLocation: pickupLocation,
-    //         //     returnDate: dayjs(returnDate).format("YYYY/MM/DD"),
-    //         //     returnLocation: returnLocation
-    //         // }
-    //     ))
-    // }
 
-    const deleteApppointment = async (id:string) => {
-        'use server'
+
+export default function BookingList() {
+
+    const [appointments, setAppointments] = useState<AppointmentItem[]>([]);
+    console.log("test");
+
+    const {data:session} = useSession()
+
+    useEffect(() => {
+        const fetchAppointments = async () => {
+            try {
+                const res = await fetch("http://localhost:5000/api/v1/appointments",{
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        authorization: `Bearer ${session?.user.token}`
+                    }
+                });
+                if (res.ok) {
+                    const result = await res.json();
+                    console.log(result.data);
+
+                    setAppointments(result.data);
+                } else {
+                    console.error("Failed to fetch appointments:", res.statusText);
+                }
+            } catch (error) {
+                console.error("Error fetching appointments:", error);
+            }
+        };
+
+        fetchAppointments();
+    }, []);
+
+    const deleteAppointment = async (id: string) => {
         try {
-            const appointment = await fetch(`http://localhost:5000/api/v1/appointments/${id}`, {
+            const res = await fetch(`http://localhost:5000/api/v1/appointments/${id}`, {
                 method: 'DELETE',
                 headers: {
-                    authorization: `Bearer ${session.user.token}`
+                    'Content-Type': 'application/json',
+                    authorization: `Bearer ${session?.user?.token}`
                 }
             });
+            if (res.ok) {
+                setAppointments(prevAppointments => prevAppointments.filter(item => item._id !== id));
+            } else {
+                console.error("Failed to delete appointment:", res.statusText);
+            }
         } catch (error) {
-            console.log(error);
+            console.error("Error deleting appointment:", error);
         }
+    };
+    
+    if (!session) return null;
+    console.log(appointments.length);
+    if (appointments.length === 0) {
+        return (
+            <div className="p-10 flex flex-row justify-center">
+                <div>No Interview Booking</div>
+            </div>
+        );
     }
 
-    if (appointmentsJsonReady.count == 0) return (
-        <div className="p-10 flex flex-row justify-center">
-            <div>
-                No Interview Booking
-            </div>
-        </div>
-    )
-    
     return (
-        <>
+
+        <div className="flex flex-col">
+            <div className="grid grid-cols-3 mt-10 ">
             {
-                appointmentsJsonReady.data.map((appointmentItem:AppointmentItem) => (
-                    <div className="bg-slate-200 rounded px-5 mx-5 py-2 my-2" key={appointmentItem._id}>
-                        <div className="text-xl text-black">{session.user.name}</div>
-                        <div className="text-sm">Company : {appointmentItem.company.name}</div>
-                        <div className="text-sm">AppDate : {format(appointmentItem.appDate, 'yyyy-MM-dd HH:mm:ss')}</div>
-                        <form action={deleteApppointment(appointmentItem._id)}>
-                            <button className="block rounded-md bg-sky-600 hover:bg-indigo-600 px-3 py-3 text-white shadow-sm">
-                                Remove Booking
-                            </button>
-                        </form>
+                appointments.map(appointment =>(
+                    <div key={appointment._id}>
+                        <p>{appointment.appDate}</p>
+                        {appointment.company.name}
+                        
+                        <button onClick={() => deleteAppointment(appointment._id)} className="block rounded-md bg-sky-600 hover:bg-indigo-600 px-3 py-3 text-white shadow-sm">
+                            Remove Booking
+                        </button>
+                        <Link href={'/mybooking/edit/' + appointment._id}>
+                            Edit
+                        </Link>
                     </div>
                 ))
             }
-        </>
+        </div>
+        </div>
+        
     );
 }

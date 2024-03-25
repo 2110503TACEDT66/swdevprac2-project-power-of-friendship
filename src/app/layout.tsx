@@ -25,12 +25,12 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className='bg-white'>
-        <ReduxProvider>
+        {/* <ReduxProvider> */}
           <NextAuthProvider session={session}>
               <TopMenu/>
               {children}
           </NextAuthProvider>
-        </ReduxProvider>
+        {/* </ReduxProvider> */}
       </body>
     </html>
   );

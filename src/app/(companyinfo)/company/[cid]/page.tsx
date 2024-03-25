@@ -1,3 +1,5 @@
+'use client'
+
 import Image from "next/image"
 import getCompany from "@/libs/getCompany"
 import { getServerSession } from "next-auth"
@@ -9,45 +11,74 @@ import { TravelCard } from "@/components/TravelCard"
 import session from "redux-persist/lib/storage/session"
 import GoogleMap from "@/components/googleMap"
 import SectionCard from "@/components/SectionCard"
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react"
 
-export default async function CompanyDetailPage({params} : {params: {cid:string}}){
+export default function CompanyDetailPage({ params }: { params: { cid: string } }) {
+    const [sectionJsonReady, setSectionJsonReady] = useState<any[]>([]);
+    const [companyDetail, setCompanyDetail] = useState<any>(null);
+    const [distanceAndDurationJson, setDistanceAndDurationJson] = useState<any>(null);
+    const [lat,setLat] = useState<any>(null)
+    const [lng,setlng] = useState<any>(null)
 
-    const session = await getServerSession(authOptions)
-    if (!session || !session.user.token) return null
+    const {data:session} = useSession()
+    if(!session) return null
 
-    const companyDetail = await getCompany(params.cid)
+    useEffect(() => {
+        const fetchData = async () => {
 
-    const response = await fetch(`http://localhost:5000/api/v1/companies/${params.cid}/sections`, {
-        method: 'GET',
-        headers:{
-            authorization: `Bearer ${session.user.token}`,
-        }
-    });
-    const sectionJsonReady = await response.json()
+            const companyDetailResponse = await getCompany(params.cid);
+            setCompanyDetail(companyDetailResponse.data);
+            console.log(companyDetailResponse.data.name);
 
-    const address = await companyDetail.data.address
-    const location = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyD_7CKN7QIjeCTb6LzTnWh7eF4yrku3CPQ`, {
-        method: 'GET'
-    })
-    const locationJson = await location.json()
-    const lat = locationJson.results[0].geometry.location.lat
-    const lng = locationJson.results[0].geometry.location.lng
-    const distanceAndDuration = await fetch('http://localhost:5000/api/v1/companies/calculate-distance', {
+            const sectionResponse = await fetch(`http://localhost:5000/api/v1/companies/${params.cid}/sections`, {
+                method: 'GET',
+                headers: {
+                    authorization: `Bearer ${session.user.token}`,
+                }
+            });
+            const sectionData = await sectionResponse.json();
+            setSectionJsonReady(sectionData.data);
+
+            const address = companyDetailResponse.data.address;
+            const locationResponse = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyD_7CKN7QIjeCTb6LzTnWh7eF4yrku3CPQ`, {
+                method: 'GET'
+            });
+            const locationJson = await locationResponse.json();
+            const lat = locationJson.results[0].geometry.location.lat;
+            const lng = locationJson.results[0].geometry.location.lng;
+            setLat(lat)
+            setlng(lng)
+            const distanceAndDurationResponse = await fetch('http://localhost:5000/api/v1/companies/calculate-distance', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    company: `${companyDetail.data.name}`
+                    company: companyDetailResponse.data.name
                 }),
             });
-    const distanceAndDurationJson = await distanceAndDuration.json()
+            const distanceAndDurationData = await distanceAndDurationResponse.json();
+            setDistanceAndDurationJson(distanceAndDurationData);
+        };
 
-    return(
+        fetchData();
+    }, []);
+
+    const handleSectionClick = () => {
+        window.location.reload();
+    };
+    
+
+    if(!companyDetail) return null
+    if(!distanceAndDurationJson) return null
+
+    return (
+
         <main className="text-center p-5">
-            <h1 className="text-lg font-medium">{companyDetail.data.name}</h1>
+            <h1 className="text-lg font-medium">{companyDetail.name}</h1>
             <div className="flex flex-row my-5">
-                <Image src={ companyDetail.data.picture } 
+                <Image src={ companyDetail.picture } 
                     alt="Company Image" 
                     width={0} 
                     height={0} 
@@ -55,10 +86,10 @@ export default async function CompanyDetailPage({params} : {params: {cid:string}
                     className="rounded-lg w-[30%]"/>
                 {/* <TravelCard></TravelCard> */}
                 <div className="text-md mx-5 text-black text-left bg-white rounded-md p-5">
-                    <div className="text-md mx-5">Address: { companyDetail.data.address }</div>
-                    <div className="text-md mx-5">Website: { companyDetail.data.website }</div>
-                    <div className="text-md mx-5">Tel: { companyDetail.data.tel }</div>
-                    <div className="text-md mx-5 text-left">{ companyDetail.data.description }</div>
+                    <div className="text-md mx-5">Address: { companyDetail.address }</div>
+                    <div className="text-md mx-5">Website: { companyDetail.website }</div>
+                    <div className="text-md mx-5">Tel: { companyDetail.tel }</div>
+                    <div className="text-md mx-5 text-left">{ companyDetail.description }</div>
                     {/* <Link href={`/reservations?id=${params.cid}&model=${companyDetail.data.model}`}>
                         <button className="block rounded-md bg-sky-600 hover:bg-indigo-600 px-3 py-3 text-white shadow-sm">Make Reservation</button>
                     </Link> */}
@@ -66,9 +97,15 @@ export default async function CompanyDetailPage({params} : {params: {cid:string}
             </div>
             <h1 className="text-lg font-medium my-5">Interview Time</h1>
             <div className="grid-cols-4 grid gap-4">
-                {
-                    sectionJsonReady.data.map((sectionItem:SectionItem) => (
-                        <SectionCard sectionItem={sectionItem} companyId={params.cid}/> 
+                {sectionJsonReady.map(sectionItem => (
+                    
+                    <div key={sectionItem._id} onClick={handleSectionClick}>
+                        <SectionCard
+                            sectionItem={sectionItem}
+                            companyId={params.cid}
+                        />
+                    </div>
+                    
                     ))
                 }
             </div>
@@ -83,7 +120,3 @@ export default async function CompanyDetailPage({params} : {params: {cid:string}
         </main>
     )
 }
-
-// export async function genreateStaticParams(){
-//     return [{cid:'001'},{cid:'002'},{cid:'003'},{cid:'004'}]
-// }
