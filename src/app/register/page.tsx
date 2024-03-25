@@ -1,42 +1,47 @@
+'use client'
 
 import Car from "@/db/Models/Car";
 import { dbConnect } from "@/db/dbConnect";
 import User from "@/db/Models/User";
+import React from "react";
+import Alert from '@mui/material/Alert';
+import { useRouter } from "next/router";
 
 
-export default async function registerPage(){
 
-    const registerUser = async (addInformation:FormData) =>{
-        'use server'
-        const username =  addInformation.get('name')
-        const password = addInformation.get('password')
-        const email = addInformation.get('email')
-        const telephone = addInformation.get('Tel')
-        console.log(addInformation)
-        try{
-            const response = await fetch('http://localhost:5000/api/v1/auth/register', {
+export default  function registerPage(){
+
+    const handleSubmit = ((e:any) => {
+        e.preventDefault()
+        const data = {
+            "name": e.target.name.value,
+            "email":e.target.email.value,
+            "password":e.target.password.value,
+            "tel":e.target.Tel.value,
+            "role": "user"
+        }
+        fetch('http://localhost:5000/api/v1/auth/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    name: username,
-                    email: email,
-                    password: password,
-                    tel: telephone,
-                    role: 'user'
-                }),
-            });
-        }catch(error){
-            console.log(error);
-        }
-
-    }
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(result => {
+                console.log(result.success);
+                alert("Congratulation")
+                if(result.success === true){
+                    window.location.href = '/';
+                }      
+            })
+    })
+        
 
 
     return (
         <main className = 'bg-slate-100 m-5 p-5'>     
-            <form action={registerUser}>
+            <form onSubmit={handleSubmit}>
                 <div className="text-xl text-blue-700">Register</div>
                 <div className="flex items-center w-1/2 my-2">
                     <label htmlFor="name" className="w-auto block text-gray-700 pr-4">
