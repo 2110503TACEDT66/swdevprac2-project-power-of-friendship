@@ -6,13 +6,13 @@ import { Session, getServerSession } from "next-auth"
 import { useEffect, useState } from "react"
 import { useSession } from 'next-auth/react'
 import Link from "next/link";
+import getUserProfile from "@/libs/getUserProfile";
 
 
 
 export default function BookingList() {
 
     const [appointments, setAppointments] = useState<AppointmentItem[]>([]);
-    console.log("test");
 
     const {data:session} = useSession()
 
@@ -28,7 +28,7 @@ export default function BookingList() {
                 });
                 if (res.ok) {
                     const result = await res.json();
-                    console.log(result.data);
+
 
                     setAppointments(result.data);
                 } else {
@@ -62,7 +62,7 @@ export default function BookingList() {
     };
     
     if (!session) return null;
-    console.log(appointments.length);
+
     if (appointments.length === 0) {
         return (
             <div className="p-10 flex flex-row justify-center">
@@ -76,13 +76,27 @@ export default function BookingList() {
         <div className="flex flex-col">
             <div className="grid grid-cols-3 mt-10 ">
             {
-                appointments.map(appointment =>(
+                (session.user.role !== 'admin')?appointments.map(appointment =>(
                     <div key={appointment._id}>
                         <p>{appointment.appDate}</p>
                         {appointment.company.name}
                         
                         <button onClick={() => deleteAppointment(appointment._id)} className="block rounded-md bg-sky-600 hover:bg-indigo-600 px-3 py-3 text-white shadow-sm">
                             Remove Booking
+                        </button>
+                        <Link href={'/mybooking/edit/' + appointment._id}>
+                            Edit
+                        </Link>
+                    </div>
+                )):
+                appointments.map(appointment =>(
+                    <div key={appointment._id}>
+                        <p>{appointment.appDate}</p>
+                        {appointment.company.name}
+                        {appointment.user}
+                        
+                        <button onClick={() => deleteAppointment(appointment._id)} className="block rounded-md bg-sky-600 hover:bg-indigo-600 px-3 py-3 text-white shadow-sm">
+                            Remove
                         </button>
                         <Link href={'/mybooking/edit/' + appointment._id}>
                             Edit

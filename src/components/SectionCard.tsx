@@ -6,13 +6,17 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { useSession } from 'next-auth/react';
 
-export default function SectionCard({ sectionItem, companyId }: { sectionItem: SectionItem; companyId: string }) {
+export default function SectionCard({ sectionItem, companyId, appointmentItem}: { sectionItem: SectionItem; companyId: string; appointmentItem:AppointmentItem | null }) {
 
   const {data:session} = useSession()
+  console.log(appointmentItem);
 
-  const updateSection = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    alert("Are you sure")
+  let userId = '';
+  if(appointmentItem){
+    userId = appointmentItem.user
+  }
+
+  const updateSection = async () => {
     try {
       const response = await fetch(`http://localhost:5000/api/v1/companies/${companyId}/appointments`, {
         method: 'POST',
@@ -22,9 +26,11 @@ export default function SectionCard({ sectionItem, companyId }: { sectionItem: S
         },
         body: JSON.stringify({
           appDate: sectionItem.date,
+          user: userId
         }),
       });
       const data = await response.json();
+      console.log(data);
     } catch (error) {
       console.error('Error updating section:', error);
     }

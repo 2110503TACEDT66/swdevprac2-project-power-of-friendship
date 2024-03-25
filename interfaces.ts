@@ -18,7 +18,6 @@ interface BookingItem {
 
 interface SectionItem {
     _id: string
-    company: string
     user: string
     date: Date
     status: string
