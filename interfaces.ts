@@ -9,18 +9,26 @@ interface ReservationItem{
 }
 
 interface BookingItem {
-    name: string;
-    tel: string;
-    id: string;
-    email: string;
-    company: string;
-    bookDate: string;
+    _id: string
+    company: string
+    user: string
+    appDate: Date
+    createAt: Date
   }
 
 interface SectionItem {
-    company:string
+    _id: string
+    company: string
     user: string
     date: Date
     status: string
     description: string
+}
+
+interface AppointmentItem {
+    _id: string
+    company: string
+    user: string
+    appDate: Date
+    createAt: Date
 }

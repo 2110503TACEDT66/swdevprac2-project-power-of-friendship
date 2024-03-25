@@ -1,4 +1,3 @@
-
 import Image from "next/image"
 import getCompany from "@/libs/getCompany"
 import { getServerSession } from "next-auth"
@@ -9,6 +8,7 @@ import Link from "next/link"
 import { TravelCard } from "@/components/TravelCard"
 import session from "redux-persist/lib/storage/session"
 import GoogleMap from "@/components/googleMap"
+import SectionCard from "@/components/SectionCard"
 
 export default async function CompanyDetailPage({params} : {params: {cid:string}}){
 
@@ -23,18 +23,15 @@ export default async function CompanyDetailPage({params} : {params: {cid:string}
             authorization: `Bearer ${session.user.token}`,
         }
     });
+    const sectionJsonReady = await response.json()
 
     const address = await companyDetail.data.address
-
     const location = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyD_7CKN7QIjeCTb6LzTnWh7eF4yrku3CPQ`, {
         method: 'GET'
     })
-    
     const locationJson = await location.json()
-
     const lat = locationJson.results[0].geometry.location.lat
     const lng = locationJson.results[0].geometry.location.lng
-
     const distanceAndDuration = await fetch('http://localhost:5000/api/v1/companies/calculate-distance', {
                 method: 'POST',
                 headers: {
@@ -44,10 +41,7 @@ export default async function CompanyDetailPage({params} : {params: {cid:string}
                     company: `${companyDetail.data.name}`
                 }),
             });
-
     const distanceAndDurationJson = await distanceAndDuration.json()
-
-    const sectionJsonReady = await response.json()
 
     return(
         <main className="text-center p-5">
@@ -73,11 +67,8 @@ export default async function CompanyDetailPage({params} : {params: {cid:string}
             <h1 className="text-lg font-medium my-5">Interview Time</h1>
             <div className="grid-cols-4 grid gap-4">
                 {
-                    sectionJsonReady.data.map((SectionItem:SectionItem) => (
-                        <InteractiveSection>
-                                <div>Date : {format(SectionItem.date, 'yyyy-MM-dd HH:mm:ss')}</div>
-                                <div>Status : {SectionItem.status}</div>
-                        </InteractiveSection>
+                    sectionJsonReady.data.map((sectionItem:SectionItem) => (
+                        <SectionCard sectionItem={sectionItem} companyId={params.cid}/> 
                     ))
                 }
             </div>

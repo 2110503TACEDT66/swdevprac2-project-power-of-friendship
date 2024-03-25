@@ -1,7 +1,4 @@
-'use client'
-import React from 'react';
-
-export default function InteractiveSection({children} : {children: React.ReactNode}){
+export default function InteractiveSection({children} : {children: React.ReactNode}) {
 
     function onCardMouseAction(event: React.SyntheticEvent) {
         if (event.type == 'mouseover') {   
@@ -14,10 +11,8 @@ export default function InteractiveSection({children} : {children: React.ReactNo
     }
 
     return (
-        <div className = 'w-full text-black bg-slate-200 rounded-lg shadow-lg' 
-        onMouseOver={ (e) => onCardMouseAction(e)} 
-        onMouseOut={ (e) => onCardMouseAction(e)}>
-              { children }
+        <div className = 'w-full text-black bg-slate-200 rounded-lg shadow-lg' onMouseOver={(e) => onCardMouseAction(e)} onMouseOut={(e) => onCardMouseAction(e)}>
+            { children }
         </div>
     );
 }
