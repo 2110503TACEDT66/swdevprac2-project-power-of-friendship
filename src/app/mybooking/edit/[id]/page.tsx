@@ -61,7 +61,8 @@ export default function page({params} : {params: {id: string}}) {
 
   const createAppt = async (date: Date) => {
     try {
-      await createAppointment(session?.user.token, appointment?.company.id, date, userId) 
+        if(appointment)
+      await createAppointment(session?.user.token, appointment.company.id, date, userId) 
     } catch (error) {
       console.error('Error updating section:', error);
     }
@@ -79,7 +80,7 @@ export default function page({params} : {params: {id: string}}) {
     return (
         <div className = 'flex flex-col items-center'>
             <div className="flex flex-row justify-center mt-5">
-                <div className="text-xl font-medium px-5 py-2 rounded-xl bg-white w-fit font-serif">Register</div>
+                <div className="text-xl font-medium px-5 py-2 rounded-xl bg-white w-fit font-serif">Edit My Booking</div>
             </div>
             <div className="grid-cols-8 grid gap-4 mt-3">
                 {

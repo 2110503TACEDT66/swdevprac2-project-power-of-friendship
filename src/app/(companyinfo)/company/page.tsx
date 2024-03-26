@@ -4,9 +4,9 @@ import CompanyCatalog from "@/components/CompanyCatalog";
 import { Suspense } from "react";
 import { LinearProgress } from "@mui/material";
 
-export default function Company() {
+export default async function Company() {
 
-    const companies = getCompanies()
+    const companies = await getCompanies()
 
     return (
         <main className="text-center p-5">

@@ -4,7 +4,7 @@ import styles from './topmenu.module.css';
 
 import { Link } from '@mui/material';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/libs/auth';
 
 export default async function TopMenu() {
 

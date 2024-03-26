@@ -1,5 +1,5 @@
-export default async function createAppointment(token: string | undefined, id: string, date: Date, userId: string) {
-    const response = await fetch(`http://localhost:5000/api/v1/companies/${id}/appointments`, {
+export default async function createAppointment(token: string | undefined, id: string | null, date: Date, userId: string) {
+    const response = await fetch(`${process.env.BACKEND_URL}/api/v1/companies/${id}/appointments`, {
         method: 'POST',
         headers: {
           authorization: `Bearer ${token}`,

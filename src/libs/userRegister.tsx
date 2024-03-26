@@ -1,5 +1,5 @@
 export default function userRegister(data: Object) {
-    fetch('http://localhost:5000/api/v1/auth/register', {
+    fetch(`${process.env.BACKEND_URL}/api/v1/auth/register`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

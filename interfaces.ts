@@ -26,8 +26,26 @@ interface SectionItem {
 
 interface AppointmentItem {
     _id: string
-    company: string
+    company: {
+        id: string,
+        name: string
+    }
     user: string
     appDate: Date
     createAt: Date
 }
+
+interface companyItem {
+    id:string,
+    name: string,
+    address: string,
+    website: string,
+    description: string,
+    tel: string,
+    picture: string
+}
+
+type CompanyJson = {
+    count: number;
+    data: companyItem[];
+};

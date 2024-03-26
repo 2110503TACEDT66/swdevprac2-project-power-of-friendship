@@ -1,5 +1,5 @@
 export default async function createComapany(data: Object, token: string) {
-    const response = await fetch('http://localhost:5000/api/v1/companies', {
+    const response = await fetch(`${process.env.BACKEND_URL}/api/v1/companies`, {
         method: 'POST',
         headers: {
             authorization: `Bearer ${token}`,

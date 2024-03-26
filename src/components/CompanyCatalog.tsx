@@ -3,10 +3,10 @@ import ProductCard from "./ProductCard";
 import getUserProfile from "@/libs/getUserProfile";
 
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/libs/auth";
 import createComapany from "@/libs/createCompany";
 
-export default async function CompanyCatalog({companyJson} : {companyJson: Object}) {
+export default async function CompanyCatalog({companyJson} : {companyJson: CompanyJson}) {
 
     const session = await getServerSession(authOptions)
     if (!session || !session.user.token) return null
@@ -33,16 +33,16 @@ export default async function CompanyCatalog({companyJson} : {companyJson: Objec
         }
     }
 
-    const companyJsonReady = await companyJson
+    const companyJsonReady: CompanyJson = await companyJson
 
     let index = 0;
 
     return (
         <div className="flex flex-col items-center">
-            <h1 className="text-black font-serif text-sm mt-2">Explore {companyJsonReady.count} models </h1>
+            <h1 className="text-black font-serif text-sm mt-2">Explore {companyJsonReady.count} companies </h1>
             <div style={{margin : '20px', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-around', alignContent: 'space-around'}} key={index++}>
                 {
-                    companyJsonReady.data.map((companyItem:Object) => (
+                    companyJsonReady.data.map((companyItem:companyItem) => (
                         <Link href={ `/company/${companyItem.id}` } className="w-[100%] sm:w-[50%] md:w-[30%] lg:w-[20%] p-2 sm:p-4 md:p-4 lg:p-4">
                             <ProductCard companyName={companyItem.name} imgSrc={companyItem.picture} />
                         </Link>
