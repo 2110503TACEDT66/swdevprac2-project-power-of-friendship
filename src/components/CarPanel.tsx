@@ -1,11 +1,12 @@
 'use client'
-import ProductCard from "./ProductCard";
-import { useReducer, useRef, useEffect, useState } from "react";
+
 import Link from "next/link";
-import { count } from "console";
+import ProductCard from "./ProductCard";
 import getCars from "@/libs/getCompanies";
 
-export default function CarPanel(){
+import { useReducer, useRef, useEffect, useState } from "react";
+
+export default function CarPanel() {
 
     const compareReducer = (compareList:Set<string>, action:{type:string, carName:string})=>{
         switch(action.type){

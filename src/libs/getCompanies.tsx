@@ -1,4 +1,4 @@
-import { resolve } from "path"
+import { resolve } from "path";
 
 export default async function getCompnies() {
     await new Promise ((resolve) => setTimeout(resolve, 1000))

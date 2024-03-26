@@ -1,8 +1,8 @@
 import getCompanies from "@/libs/getCompanies";
 import CompanyCatalog from "@/components/CompanyCatalog";
+
 import { Suspense } from "react";
 import { LinearProgress } from "@mui/material";
-// import CarPanel from "@/components/CarPanel";
 
 export default function Company() {
 
@@ -10,15 +10,12 @@ export default function Company() {
 
     return (
         <main className="text-center p-5">
-            <h1 className="text-xl font-medium">Select Your Company</h1>
+            <div className="text-center flex flex-col items-center">
+                <h1 className="text-xl font-medium px-5 py-2 rounded-xl bg-white w-fit font-serif">Select Your Company</h1>
+            </div>
             <Suspense fallback = {<p>Loading... <LinearProgress/></p>}>
                 <CompanyCatalog companyJson={companies}/>
             </Suspense>
-
-            {/* <hr className="my-10"/>
-
-            <h1 className="text-xl font-medium">TRY Client-side Car Panel</h1>
-            <CarPanel/> */}
         </main>
     );
 }

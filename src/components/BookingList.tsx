@@ -1,39 +1,24 @@
 'use client'
 
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-
-import { Session, getServerSession } from "next-auth"
-import { useEffect, useState } from "react"
-import { useSession } from 'next-auth/react'
 import Link from "next/link";
-import getUserProfile from "@/libs/getUserProfile";
+import getAppointments from "@/libs/getAppointments";
+import deleteAppointment from "@/libs/deleteAppointment";
 
-
+import { format } from 'date-fns';
+import { useEffect, useState } from "react";
+import { useSession } from 'next-auth/react';
 
 export default function BookingList() {
 
     const [appointments, setAppointments] = useState<AppointmentItem[]>([]);
 
-    const {data:session} = useSession()
+    const {data: session} = useSession();
 
     useEffect(() => {
         const fetchAppointments = async () => {
             try {
-                const res = await fetch("http://localhost:5000/api/v1/appointments",{
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        authorization: `Bearer ${session?.user.token}`
-                    }
-                });
-                if (res.ok) {
-                    const result = await res.json();
-
-
-                    setAppointments(result.data);
-                } else {
-                    console.error("Failed to fetch appointments:", res.statusText);
-                }
+                const appointmentData = await getAppointments(session?.user.token)
+                setAppointments(appointmentData.data);
             } catch (error) {
                 console.error("Error fetching appointments:", error);
             }
@@ -42,20 +27,10 @@ export default function BookingList() {
         fetchAppointments();
     }, []);
 
-    const deleteAppointment = async (id: string) => {
+    const deleteAppt = async (id: string) => {
         try {
-            const res = await fetch(`http://localhost:5000/api/v1/appointments/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    authorization: `Bearer ${session?.user?.token}`
-                }
-            });
-            if (res.ok) {
-                setAppointments(prevAppointments => prevAppointments.filter(item => item._id !== id));
-            } else {
-                console.error("Failed to delete appointment:", res.statusText);
-            }
+            const response = await deleteAppointment(session?.user?.token, id)
+            setAppointments(prevAppointments => prevAppointments.filter(item => item._id !== id));
         } catch (error) {
             console.error("Error deleting appointment:", error);
         }
@@ -65,47 +40,42 @@ export default function BookingList() {
 
     if (appointments.length === 0) {
         return (
-            <div className="p-10 flex flex-row justify-center">
-                <div>No Interview Booking</div>
+            <div className="flex flex-row justify-center">
+                <div className="text-xl font-medium px-5 py-2 rounded-xl bg-white w-fit font-serif text-red-600">No Interview Booking</div>
             </div>
         );
     }
 
     return (
-
         <div className="flex flex-col">
-            <div className="grid grid-cols-3 mt-10 ">
-            {
-                (session.user.role !== 'admin')?appointments.map(appointment =>(
-                    <div key={appointment._id}>
-                        <p>{appointment.appDate}</p>
-                        {appointment.company.name}
-                        
-                        <button onClick={() => deleteAppointment(appointment._id)} className="block rounded-md bg-sky-600 hover:bg-indigo-600 px-3 py-3 text-white shadow-sm">
-                            Remove Booking
-                        </button>
-                        <Link href={'/mybooking/edit/' + appointment._id}>
-                            Edit
-                        </Link>
-                    </div>
-                )):
-                appointments.map(appointment =>(
-                    <div key={appointment._id}>
-                        <p>{appointment.appDate}</p>
-                        {appointment.company.name}
-                        {appointment.user}
-                        
-                        <button onClick={() => deleteAppointment(appointment._id)} className="block rounded-md bg-sky-600 hover:bg-indigo-600 px-3 py-3 text-white shadow-sm">
-                            Remove
-                        </button>
-                        <Link href={'/mybooking/edit/' + appointment._id}>
-                            Edit
-                        </Link>
-                    </div>
-                ))
-            }
+            <div className="grid grid-cols-3 font-serif">
+                {
+                    (session.user.role !== 'admin') ? appointments.map(appointment => (
+                        <div key={appointment._id} className="bg-white m-2 px-5 py-2 rounded-2xl">
+                            <div>{format(appointment.appDate, 'HH:mm:ss yyyy-MM-dd')}</div>
+                            <div>{appointment.company.name}</div>
+                            <div className="flex flex-row space-x-2 mt-2 font-serif">
+                               <button onClick={() => deleteAppt(appointment._id)} className="block rounded-md bg-red-400 hover:bg-red-600 px-3 py-3 text-white shadow-sm">
+                                    Remove
+                                </button>
+                            <Link href={'/mybooking/edit/' + appointment._id} className="block rounded-md bg-cyan-600 hover:bg-cyan-800 px-3 py-3 text-white shadow-sm">Edit</Link> 
+                            </div>
+                        </div>
+                    )) :
+                    appointments.map(appointment => (
+                        <div key={appointment._id} className="bg-white m-2 px-5 py-2 rounded-2xl">
+                            <div>{format(appointment.appDate, 'HH:mm:ss yyyy-MM-dd')}</div>
+                            <div>{appointment.company.name}</div>
+                            <div className="flex flex-row space-x-2 mt-2 font-serif">
+                               <button onClick={() => deleteAppt(appointment._id)} className="block rounded-md bg-red-400 hover:bg-red-600 px-3 py-3 text-white shadow-sm">
+                                    Remove
+                                </button>
+                            <Link href={'/mybooking/edit/' + appointment._id} className="block rounded-md bg-cyan-600 hover:bg-cyan-800 px-3 py-3 text-white shadow-sm">Edit</Link> 
+                            </div>
+                        </div>
+                    ))
+                }
+            </div>
         </div>
-        </div>
-        
     );
 }

@@ -24,7 +24,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className='bg-white'>
+      <body>
         {/* <ReduxProvider> */}
           <NextAuthProvider session={session}>
               <TopMenu/>

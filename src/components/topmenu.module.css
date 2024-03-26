@@ -1,4 +1,4 @@
-.menucontainer{
+.menucontainer {
     height: 50px;
     background-color: white;
     position: fixed;
@@ -17,12 +17,31 @@
     width: auto;
 }
 
-.itemcontainer{
-    width: 120px;
+.itemcontainer {
+    width: fit-content;
     text-align: center;
     margin-top: auto;
     margin-bottom: auto;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
-    font-size: 10pt;
+    font-size: 12pt;
     color: grey;
+    font-family: serif;
+    margin-inline: 20px;
+    padding-inline: 7px;
+}
+
+.itemcontainer:hover {
+    width: fit-content;
+    text-align: center;
+    margin-top: auto;
+    margin-bottom: auto;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 12pt;
+    color: black;
+    font-family: serif;
+    border-radius: 10px;
+    background-color: rgb(19, 112, 112, 0.1);
+    box-shadow: 0px 0px 10px rgb(19, 112, 112, 0.2);
+    margin-inline: 20px;
+    padding-inline: 7px;
 }

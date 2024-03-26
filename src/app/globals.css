@@ -90,9 +90,9 @@ body {
 }
 
 body {
-  margin-top: 50px;
+  background-color: lightblue;
   color: rgb(var(--foreground-rgb));
-  
+  margin-top: 50px;
 }
 
 a {
