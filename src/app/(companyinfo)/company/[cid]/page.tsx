@@ -84,7 +84,8 @@ export default function CompanyDetailPage({params} : {params: {cid: string}}) {
                     <GoogleMap Llat={lat} Llng={lng}/>
                 </div>
                 <div className="text-black bg-white rounded-xl h-fit p-3 font-serif">
-                    
+                    <h1>distance: {distanceAndDurationJson.distance}</h1>
+                    <h1>duration: {distanceAndDurationJson.duration}</h1>
                 </div>
             </div>
         </main>
