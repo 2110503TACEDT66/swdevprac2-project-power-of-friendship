@@ -5,7 +5,7 @@ export default async function getDistanceAndDuration(companyName: string) {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    company: companyName
+                    company: "Siam Cement Group (SCG)"
                 }),
             });
     if (!response.ok) {

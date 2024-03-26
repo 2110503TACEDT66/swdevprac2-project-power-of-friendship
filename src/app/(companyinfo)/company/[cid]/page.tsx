@@ -26,17 +26,15 @@ export default function CompanyDetailPage({params} : {params: {cid: string}}) {
         const fetchData = async () => {
 
             const companyDetail = await getCompany(params.cid);
-            setCompanyDetail(companyDetail.data);
-            console.log(companyDetail.data.name);
-
+            setCompanyDetail(await companyDetail.data);
             const sectionData = await getSectionsByCompany(session.user.token, params.cid);
             setSectionJsonReady(sectionData.data);
-
             const address = companyDetail.data.address;
             const locationJson = await getLocation(address);
             const lat = locationJson.results[0].geometry.location.lat; setLat(lat);
             const lng = locationJson.results[0].geometry.location.lng; setlng(lng);
-            const distanceAndDurationData = await getDistanceAndDuration(companyDetail.data.name);
+            const companyName:string = await companyDetail.data.name
+            const distanceAndDurationData = await getDistanceAndDuration(companyName);
             setDistanceAndDurationJson(distanceAndDurationData);
         };
 
@@ -86,8 +84,7 @@ export default function CompanyDetailPage({params} : {params: {cid: string}}) {
                     <GoogleMap Llat={lat} Llng={lng}/>
                 </div>
                 <div className="text-black bg-white rounded-xl h-fit p-3 font-serif">
-                    <h1>distance: {distanceAndDurationJson.distance}</h1>
-                    <h1>duration: {distanceAndDurationJson.duration}</h1>
+                    
                 </div>
             </div>
         </main>
