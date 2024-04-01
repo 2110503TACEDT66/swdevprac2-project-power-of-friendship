@@ -10,10 +10,9 @@ export default async function CompanyCatalog({companyJson} : {companyJson: Compa
 
     const session = await getServerSession(authOptions)
     if (!session || !session.user.token) return null
+    console.log(session);
 
     const profile = await getUserProfile(session.user.token)
-    var createdAt = new Date(profile.data.createdAt)
-
     const createCom = async (addCompanyForm: FormData) => {
         'use server'
         const data = {
@@ -34,6 +33,7 @@ export default async function CompanyCatalog({companyJson} : {companyJson: Compa
     }
 
     const companyJsonReady: CompanyJson = await companyJson
+    
 
     let index = 0;
 

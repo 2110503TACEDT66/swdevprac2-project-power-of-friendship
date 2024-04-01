@@ -1,4 +1,5 @@
 export default async function createAppointment(token: string | undefined, id: string | null, date: Date, userId: string) {
+  
     const response = await fetch(`${process.env.BACKEND_URL}/api/v1/companies/${id}/appointments`, {
         method: 'POST',
         headers: {

@@ -47,5 +47,13 @@ interface companyItem {
 
 type CompanyJson = {
     count: number;
-    data: companyItem[];
+    data: {
+        id:string,
+        name: string,
+        address: string,
+        website: string,
+        description: string,
+        tel: string,
+        picture: string
+    };
 };

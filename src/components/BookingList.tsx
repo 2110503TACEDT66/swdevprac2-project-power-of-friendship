@@ -3,6 +3,7 @@
 import Link from "next/link";
 import getAppointments from "@/libs/getAppointments";
 import deleteAppointment from "@/libs/deleteAppointment";
+import { LinearProgress } from "@mui/material";
 
 import { format } from 'date-fns';
 import { useEffect, useState } from "react";
@@ -14,17 +15,22 @@ export default function BookingList() {
 
     const {data: session} = useSession();
 
+    const [loading,setLoading] = useState(true)
+
     useEffect(() => {
         const fetchAppointments = async () => {
             try {
                 const appointmentData = await getAppointments(session?.user.token)
                 setAppointments(appointmentData.data);
+                setLoading(false)
+                
             } catch (error) {
                 console.error("Error fetching appointments:", error);
             }
         };
 
         fetchAppointments();
+        
     }, []);
 
     const deleteAppt = async (id: string) => {
@@ -38,6 +44,12 @@ export default function BookingList() {
     
     if (!session) return null;
 
+    // if(loading){
+    //         return (
+    //             <LinearProgress />
+    //         );
+    //     }
+
     if (appointments.length === 0) {
         return (
             <div className="flex flex-row justify-center">
@@ -45,6 +57,8 @@ export default function BookingList() {
             </div>
         );
     }
+
+    
 
     return (
         <div className="flex flex-col">
@@ -67,7 +81,7 @@ export default function BookingList() {
                             <div>{format(appointment.appDate, 'HH:mm:ss yyyy-MM-dd')}</div>
                             <div>{appointment.company.name}</div>
                             <div className="flex flex-row space-x-2 mt-2 font-serif">
-                               <button onClick={() => deleteAppt(appointment._id)} className="block rounded-md bg-red-400 hover:bg-red-600 px-3 py-3 text-white shadow-sm">
+                               <button onClick={() => deleteAppt(appointment._id)} className="block rounded-md bg-red-400 hover:bg-red-600 px-3 py-3 text-white shadow-sm" name={appointment.company.name}>
                                     Remove
                                 </button>
                             <Link href={'/mybooking/edit/' + appointment._id} className="block rounded-md bg-cyan-600 hover:bg-cyan-800 px-3 py-3 text-white shadow-sm">Edit</Link> 

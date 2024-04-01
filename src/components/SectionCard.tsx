@@ -9,15 +9,16 @@ import { useSession } from 'next-auth/react';
 export default function SectionCard({sectionItem, companyId, appointmentItem}: {sectionItem: SectionItem, companyId: string, appointmentItem?:AppointmentItem}) {
 
   const {data:session} = useSession()
-  console.log(appointmentItem);
+  
 
   let userId = '';
   if (appointmentItem) {
     userId = appointmentItem.user
   }
 
-  const createAppt = async () => {
+  const createAppt = async (e:React.FormEvent<HTMLFormElement>) => {
     try {
+      e.preventDefault(); // Prevent the form submission
       await createAppointment(session?.user.token, companyId, sectionItem.date, userId) 
     } catch (error) {
       console.error('Error updating section:', error);

@@ -9,17 +9,17 @@ import { useSession } from 'next-auth/react';
 
 export default function Banner() {
 
-    /* Edit here */ const covers = ['/img/cover.jpg','/img/cover2.jpg','/img/cover3.jpg']
+   
 
     const router = useRouter();
-    const [index,setIndex] = useState(0);
+    
 
     const {data: session} = useSession();
     console.log(session?.user.token)
 
     return (
-        <div className={styles.banner} onClick = {() => {setIndex(index + 1)}}>
-            <Image src = {'/img/banner.jpg'} alt='cover' layout='fill' objectFit="cover"/>
+        <div className={styles.banner}>
+            <Image src = {'/img/banner.jpg'} alt='cover' layout='fill' className='object-cover'/>
             <div className={styles.bannerText}>
                 <h1 className='text-4xl font-medium font-serif'>Your Interview Oppotunity</h1>
                 <h3 className='text-xl font-serif font-serif'>Explore Your Company with Us</h3>

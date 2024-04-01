@@ -10,11 +10,13 @@ import { format } from 'date-fns';
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import getSectionsByCompany from "@/libs/getSectionsByCompany";
+import { LinearProgress } from "@mui/material";
 
 export default function page({params} : {params: {id: string}}) {
 
     const [appointment, setAppointment] = useState<AppointmentItem | null>(null);
     const [sectionJsonReady, setSectionJsonReady] = useState<SectionItem[]>([]);
+    const [loading, setLoading] = useState(true)
 
     const {data: session} = useSession();
 
@@ -37,6 +39,7 @@ export default function page({params} : {params: {id: string}}) {
                 try {
                     const sectionData = await getSectionsByCompany(session?.user.token, appointment?.company.id)
                     setSectionJsonReady(sectionData.data);
+                    setLoading(false)
                 } catch(error) {
                     console.log(error);
                 }
@@ -76,6 +79,12 @@ export default function page({params} : {params: {id: string}}) {
         await createAppt(date)
         window.location.href = '/mybooking'
     };
+
+    if(loading){
+        return (
+            <LinearProgress></LinearProgress>
+        );
+    }
     
     return (
         <div className = 'flex flex-col items-center'>
